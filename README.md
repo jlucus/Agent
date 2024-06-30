@@ -242,4 +242,4 @@ if __name__ == "__main__":
     # Start polling
     start_polling()
 ```
-## This implementation allows the bot to handle conversational flows using button prompts, making the interaction more intuitive and user-friendly. Would you like further assistance on any specific part of this implementation?
+## This implementation allows the bot to handle conversational flows using button prompts, making the interaction more intuitive and user-friendly.
