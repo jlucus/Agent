@@ -1,3 +1,27 @@
+# planned updates
+## AI Agent Implementation - VIP Transfer Methodology:
+Creating conversational AI agents within your bot, along with button prompts, involves a few key steps. We'll leverage the existing structure and add conversational capabilities. Here's an overview of how you can achieve this:
+
+1. **Defining Conversational Flows**: Plan out the conversational paths that users can take. This includes the questions you want the bot to ask, the responses you expect, and the actions to be taken based on user input.
+2. **Implementing Conversation Handlers**: Create functions to handle various stages of the conversation, ensuring smooth transitions and appropriate responses.
+3. **Integrating Button Prompts**: Use inline buttons to guide users through the conversation, making it interactive and user-friendly.
+4. **Natural Language Processing (NLP)**: Optionally, integrate NLP libraries like spaCy or NLTK for more advanced understanding of user inputs.
+
+Let's focus on a practical implementation using your existing bot setup. We'll add a conversational flow for handling a "VIP Transfer" inquiry.
+
+### Example: Conversational Flow for "VIP Transfer"
+
+#### Step 1: Define the Conversational Flow
+1. User selects "VIP Transfer" from the initial options.
+2. Bot asks which casino the user is interested in.
+3. User selects a casino.
+4. Bot asks if the user wants to provide additional information.
+5. User provides additional information or skips.
+6. Bot confirms the details and forwards the message.
+
+#### Step 2: Implement Conversation Handlers
+
+```python
 import telebot
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton, CallbackQuery
 import json
@@ -5,39 +29,26 @@ import time
 import schedule
 from threading import Thread
 import random
-# Load .env file
-load_dotenv()
-# Set your variables to the secrets from .env
-secrets = {
-    'bot_token': os.getenv('BOT_TOKEN'), 
-    'gamba': os.getenv('GAMBA_ID'),
-    'shuffle': os.getenv('SHUFFLE_ID'),
-    'stake': os.getenv('STAKE_ID'),
-    'stake.us': os.getenv('STAKE_US_ID'),
-    'other': os.getenv('OTHER_GROUP_ID')
-}
-# Print the values to verify
-print(secrets)
 
-bot = telebot.TeleBot('BOT_TOKEN')
-
-# List of keywords to look for
-keywords = ['vip transfer', 'host/concierge', 'loss-back availability']
+# Replace 'YOUR_BOT_TOKEN' with your actual bot token
+bot_token = 'YOUR_BOT_TOKEN'
+bot = telebot.TeleBot(bot_token)
 
 # List of greetings and prompts
-greeting_keywords = ['hi', 'start', 'help', 'agent']
 greetings = ['Help with Gamba', 'Help with Shuffle', 'Help with Stake', 'Something else']
-suggestions = ["lossback", "VIP", "vip", "host", "help"]
 
 # File to store authorized users and responses
 user_data_file = 'authorized_users.json'
 responses_file = 'user_responses.json'
 
 # Group IDs to forward messages to (replace with your actual group IDs)
-import os
-from .env import load_dotenv
-
-
+group_ids = {
+    'gamba': -1002192564730,
+    'shuffle': -1002204969162,
+    'stake': -1002191239622,
+    'stake.us': -1002191239622,
+    'other': -1002191239622
+}
 
 # Load authorized users
 def load_users():
@@ -150,7 +161,7 @@ def handle_callback_query(call: CallbackQuery):
 
         # Determine the group ID to forward to
         casino_choice = user_responses.get(str(user_id))[-2]  # Second last response is the casino choice
-        group_id = secrets.get(casino_choice, secrets['other'])
+        group_id = group_ids.get(casino_choice, group_ids['other'])
         
         # Forward the response to the appropriate group
         try:
@@ -162,7 +173,7 @@ def handle_callback_query(call: CallbackQuery):
 def handle_additional_info(message):
     user_id = message.chat.id
     additional_info = message.text
-    group_id = secrets.get(user_responses.get(str(user_id))[-2], secrets['other'])
+    group_id = group_ids.get(user_responses.get(str(user_id))[-2], group_ids['other'])
 
     bot.send_message(group_id, f"User {user_id} (ID: {user_id}) provided the following additional information:\n\n{additional_info}")
     bot.send_message(message.chat.id, "Your information has been forwarded to the group.")
@@ -203,3 +214,5 @@ if __name__ == "__main__":
 
     # Start polling
     start_polling()
+```
+## This implementation allows the bot to handle conversational flows using button prompts, making the interaction more intuitive and user-friendly.
